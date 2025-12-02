@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    // "declaration": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "esModuleInterop": true,
+    "target": "ES2016",
+    "downlevelIteration": true,
+    "module": "ES2015",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "lib": [
+      "ES2016",
+      "DOM"
+    ],
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}
