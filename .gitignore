@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Builds and artifacts
+dist/
+coverage/
+
+# Logs and diagnostics
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Editor/OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
