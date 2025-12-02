@@ -7,7 +7,7 @@ export default [
       'eslint.config.js',
       // Common directories
       'node_modules/**',
-      // ouput directories
+      // output directories
       'dist/**'
     ]
   },
