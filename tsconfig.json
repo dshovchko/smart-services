@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "esModuleInterop": true,
+    "target": "ES6",
+    "downlevelIteration": true,
+    "module": "ES2015",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "lib": [
+      "ES2018",
+      "DOM"
+    ],
+    "rootDir": "src",
+    "outDir": "services"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

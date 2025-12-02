@@ -1,0 +1,50 @@
+{
+  "name": "smart-services",
+  "version": "1.0.0",
+  "description": "A set of smart tools that can improve the loading of third-party services (i.e. AdSense) for your web application",
+  "workspaces": [
+    "packages/smart-adsense",
+    "packages/smart-load-manager"
+  ],
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "smart-services-repo"
+  },
+  "keywords": [
+    "loading",
+    "lazy-loading",
+    "core-web-vitals",
+    "adsense",
+    "tagmanager"
+  ],
+  "author": "Dmytro Shovchko",
+  "license": "MIT",
+  "dependencies": {
+    "@exadel/esl": "^5.15.0"
+  },
+  "devDependencies": {
+    "@exadel/eslint-config-esl": "^5.15.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "eslint": "^9.39.1",
+    "happy-dom": "^20.0.11",
+    "pkgroll": "^2.21.4",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  },
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "pack": "npm run build && npm pack --workspaces",
+    "lint": "npm run lint --workspaces",
+    "test": "npm run test --workspaces",
+    "test:unit": "npm run test:run --workspaces",
+    "type-check": "npm run type-check --workspaces",
+    "clean": "npm run clear --workspaces"
+  }
+}
