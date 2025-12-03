@@ -74,20 +74,20 @@ export async function asyncSeries(tasks: AsyncTask[]): Promise<void> {
 }
 
 export function waitAny(tasks: WaitTask[], signal?: AbortSignal): WaitTask {
-  const func =  async (abortSignal: AbortSignal): Promise<void> => {
-    if (signal) {
-      await Promise.race(
-        tasks.map((task) => task(abortSignal))
-      );
-    } else {
-      const controller = new AbortController();
-      await Promise.race(
-        tasks.map((task) => task(controller.signal))
-      );
+  return async (abortSignal?: AbortSignal): Promise<void> => {
+    const activeSignal = signal ?? abortSignal;
+    if (activeSignal) {
+      await Promise.race(tasks.map((task) => task(activeSignal)));
+      return;
+    }
+
+    const controller = new AbortController();
+    try {
+      await Promise.race(tasks.map((task) => task(controller.signal)));
+    } finally {
       controller.abort();
     }
   };
-  return func.bind(null, signal);
 }
 
 export function waitTimeout(timeout: number): WaitTask {
