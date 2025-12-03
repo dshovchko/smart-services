@@ -41,7 +41,7 @@
     "test": "npm run type-check && npm run lint && npm run test:run",
     "test:run": "vitest run",
     "test:watch": "vitest watch",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit -p tsconfig.type-check.json"
   },
   "peerDependencies": {
     "@exadel/esl": "^5.15.0"
