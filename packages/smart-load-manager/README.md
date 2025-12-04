@@ -146,7 +146,7 @@ const fallback = SmartService.create({name: 'FallbackAds'});
 
 // Queue core services
 SmartLoad.queue(consent, SmartLoad.onComplete()); // runs once the document is fully loaded
-SmartLoad.queue(tagManager, consent.load); // runs once conset is loaded
+SmartLoad.queue(tagManager, consent.load); // runs once consent is loaded
 SmartLoad.queue(analytics, tagManager.load); // runs once TagManager is loaded
 
 // Compose richer logic via helpers

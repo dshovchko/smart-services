@@ -188,7 +188,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
       this._log('Refresh interval:', refreshInterval);
       if (refreshInterval > 0) {
         this._task.put(this.refreshAd, (refreshInterval + Math.random()) * 1000);
-        this._log(`Ad filled will be refreshed in ${refreshInterval}s  [${this._retries}]`);
+        this._log(`Ad filled will be refreshed in ${refreshInterval}s [${this._retries}]`);
       }
     }
   }
