@@ -3,20 +3,37 @@ import {promisifyTimeout, promisifyEvent} from '@exadel/esl/modules/esl-utils/as
 type AsyncTask = () => Promise<unknown>;
 type WaitTask = (signal?: AbortSignal) => Promise<unknown>;
 
-interface PromisifyIdleOptions {
+/** Options for promisifyIdle function */
+export interface PromisifyIdleOptions {
+  /** Thresholds to determine idle state */
   thresholds?: {
+    /** Total idle time threshold in ms */
     duration?: number;
+    /** Idle time to frame time ratio threshold */
     ratio?: number;
   };
+  /** Maximum timeout in ms */
   timeout?: number;
+  /** Enable debug logging */
   debug?: boolean;
+  /** AbortSignal to cancel the idle detection */
   signal?: AbortSignal;
 }
 
+/** Default idle detection thresholds and timeout */
 const IDLE_THRESHOLD_DURATION = 46.6;
 const IDLE_THRESHOLD_RATIO = 0.9;
 const IDLE_TIMEOUT = 10000;
 
+/** Promisify requestIdleCallback with enhanced idle detection
+ * The promise resolves when the browser is considered idle based on:
+ * - ratio of idle time to frame time over a series of frames
+ * - total idle time accumulated over a series of frames
+ * - maximum timeout
+ *
+ * @param options - Configuration options for idle detection
+ * @returns Promise that resolves when idle state is reached or rejects on abort
+ */
 export function promisifyIdle(options: PromisifyIdleOptions = {}): Promise<any> {
   const idleThresholdRatio = options.thresholds?.ratio || IDLE_THRESHOLD_RATIO;
   const idleThresholdDuration = options.thresholds?.duration || IDLE_THRESHOLD_DURATION;
@@ -67,12 +84,25 @@ export function promisifyIdle(options: PromisifyIdleOptions = {}): Promise<any> 
   });
 }
 
+/** Executes asynchronous tasks in series
+ * Each task starts after the previous one has completed.
+ *
+ * @param tasks - Array of asynchronous tasks to execute
+ * @returns Promise that resolves when all tasks have completed
+ */
 export async function asyncSeries(tasks: AsyncTask[]): Promise<void> {
   for (const task of tasks) {
     await task().catch();
   }
 }
 
+/** Executes multiple wait tasks in parallel
+ * Resolves when any of the tasks completes.
+ *
+ * @param tasks - Array of wait tasks to execute
+ * @param signal - Optional AbortSignal to cancel the wait
+ * @returns A wait task that resolves when any of the input tasks completes
+ */
 export function waitAny(tasks: WaitTask[], signal?: AbortSignal): WaitTask {
   return async (abortSignal?: AbortSignal): Promise<void> => {
     const activeSignal = signal ?? abortSignal;
@@ -90,6 +120,11 @@ export function waitAny(tasks: WaitTask[], signal?: AbortSignal): WaitTask {
   };
 }
 
+/** Creates a wait task that resolves after a specified timeout
+ *
+ * @param timeout - The timeout duration in milliseconds
+ * @returns A wait task that resolves after the specified timeout
+ */
 export function waitTimeout(timeout: number): WaitTask {
   return async () => promisifyTimeout(timeout);
 }
@@ -104,6 +139,11 @@ export function waitUserActivity(): WaitTask {
   };
 }
 
+/** Creates a wait task that resolves when the browser is idle
+ *
+ * @param options - Configuration options for idle detection
+ * @returns A wait task that resolves when the browser is idle
+ */
 export function waitIdle(options: PromisifyIdleOptions = {}): WaitTask {
   return async (abortSignal: AbortSignal) => promisifyIdle({...options, signal: abortSignal});
 }

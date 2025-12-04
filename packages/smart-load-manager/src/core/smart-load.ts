@@ -18,24 +18,29 @@ function onReadyState(readyPredicate: () => boolean): Promise<void> {
   });
 }
 
+/** Manager for smart loading of services */
 export class SmartLoad {
   protected static _whenStarted = createDeferred<void>();
 
+  /** Get the default mutex promise which resolves immediately */
   @memoize()
   public static defaultMutex(): Promise<void> {
     return this.createMutex(this.now);
   }
 
+  /** No wait and resolve immediately */
   @memoize()
   public static now(): Promise<void> {
     return Promise.resolve();
   }
 
+  /** Wait until the document is at least interactive and then resolve */
   @memoize()
   public static onLoaded(): Promise<void> {
     return onReadyState(() => document.readyState !== 'loading');
   }
 
+  /** Wait until the document is fully loaded and then resolve */
   @memoize()
   public static onComplete(): Promise<void> {
     return onReadyState(() => document.readyState === 'complete');
@@ -56,12 +61,14 @@ export class SmartLoad {
     });
   }
 
+  /** Queue a service to be loaded after the given task */
   public static queue(service: typeof SmartService | SmartService, after: () => Promise<unknown> = this.defaultMutex.bind(this)): void {
     const serviceInstance = service instanceof SmartService ? service : service.instance;
     serviceInstance.mutex = this.createMutex(after);
     serviceInstance.load().catch(() => void 0);
   }
 
+  /** Start the smart loading process */
   public static start(): void {
     this._whenStarted.resolve();
   }

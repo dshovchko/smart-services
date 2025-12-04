@@ -11,6 +11,7 @@ import {SmartAdsense, type SmartAdsenseOptions} from './smart-adsense';
 import type {ESLElementResizeEvent} from '@exadel/esl/modules/esl-event-listener/core';
 import type {ESLMediaChangeEvent} from '@exadel/esl/modules/esl-media-query/core';
 
+/** SmartAdsense web component for displaying Adsense ads */
 export class SmartAdsenseElement extends ESLBaseElement {
   public static override is = 'smart-adsense';
   public static observedAttributes = ['display'];
@@ -23,7 +24,9 @@ export class SmartAdsenseElement extends ESLBaseElement {
   @attr({defaultValue: 'all'}) public display: string;
   /** Ad loading strategy ('lazy' or 'eager'). Default: `lazy` */
   @attr({defaultValue: 'lazy'}) public loading: string;
+  /** Configuration parameters for SmartAdsense */
   @jsonAttr<Partial<SmartAdsenseOptions>>() public params: Partial<SmartAdsenseOptions> = {};
+  /** Inactive state of the ad (not loaded until becomes active) */
   @boolAttr() public inactive: boolean = true;
 
   protected _content: string = '';
@@ -45,6 +48,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
   protected get isEmpty(): boolean {
     return this._content.trim() === '';
   }
+  /** Current ad status */
   public get status(): string {
     return this._status;
   }
@@ -86,7 +90,6 @@ export class SmartAdsenseElement extends ESLBaseElement {
   protected override attributeChangedCallback(attrName: string, oldVal: string, newVal: string): void {
     if (!this.connected) return;
     if (attrName === 'display') {
-      this._log('Display changed', oldVal, newVal);
       this.$$on(this._onDisplayChange);
       this.init();
     }
@@ -131,9 +134,9 @@ export class SmartAdsenseElement extends ESLBaseElement {
     } catch (e) {
       // Ignore errors
     }
-    this._log('Ad pushed', this);
   }
 
+  /** Hides the ad */
   @bind
   protected hideAd(): void {
     this.status = 'hidden';
@@ -141,6 +144,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
     this._retries = 0;
   }
 
+  /** Refreshes the ad */
   @bind
   protected refreshAd(): void {
     this.status = 'pending';
@@ -189,6 +193,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
     }
   }
 
+  /** Handles intersection event to initialize ad loading */
   @listen({
     event: ESLIntersectionEvent.IN,
     once: true,
@@ -215,6 +220,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
     dispatchCustomEvent(this, 'smart-adsense:change', {bubbles: false});
   }
 
+  /** Logs messages to the console if debug mode is enabled */
   protected _log(...args: unknown[]): void {
     if (!this.config.debug) return;
     console.log(...args);

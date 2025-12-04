@@ -243,16 +243,7 @@ describe('SmartService', () => {
       await service.load();
 
       expect(console.log).toHaveBeenCalledWith(
-        'Service load() enter: ',
-        'test-service',
-        service
-      );
-      expect(console.log).toHaveBeenCalledWith(
-        'Service loadTask() enter: ',
-        'test-service'
-      );
-      expect(console.log).toHaveBeenCalledWith(
-        'Sevice loading started: ',
+        'Service loading started: ',
         'test-service'
       );
       expect(console.log).toHaveBeenCalledWith(

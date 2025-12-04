@@ -8,20 +8,23 @@ interface AdElement extends HTMLElement {
   };
 }
 
+/** Configuration options for SmartAdsense */
 export interface SmartAdsenseOptions extends SmartServiceOptions {
-  // retrying unfilled ads
-  retryDelay: number; // 0 - no retrying
-  retryCount: number; // 0 - infinite
-
-  // refreshing filled ads
-  refreshInterval: number; // 0 - no refresh
-  refreshOnResize: boolean; // false - no refresh
+  /** Retrying unfilled ads: delay between retry attempts in seconds, 0 means no retrying */
+  retryDelay: number;
+  /** Retrying unfilled ads: number of retry attempts, 0 means infinite */
+  retryCount: number;
+  /** Refreshing filled ads: interval in seconds, 0 means no refresh */
+  refreshInterval: number;
+  /** Refreshing filled ads: refresh on ad block resize, false means no refresh */
+  refreshOnResize: boolean;
 }
 
 export const STATUS_EVENT = 'adsense:status';
 const AD_STATUS_ATTR = 'data-ad-status';
 const ADSBYGOOGLE_STATUS_ATTR = 'data-adsbygoogle-status';
 
+/** SmartAdsense service class for managing adsense scripts and status observing */
 export class SmartAdsense extends SmartService {
   protected static override _config: SmartAdsenseOptions = {
     name: 'Adsense',
