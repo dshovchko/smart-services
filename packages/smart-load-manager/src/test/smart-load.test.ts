@@ -256,7 +256,7 @@ describe('SmartLoad', () => {
     expect(mockService.mutex).toBeInstanceOf(Promise);
   });
 
-  test('queue should set mutex with SmartRun.defaultMutex() by default', async () => {
+  test('queue should set mutex with SmartLoad.defaultMutex() by default', async () => {
     const mockService = MockService.create({name: 'mock', url: 'mock-url'});
     SmartLoad.queue(mockService);
     expect(mockService.mutex).toEqual(SmartLoad.defaultMutex());
