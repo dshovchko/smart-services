@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "baseUrl": ".",
+    "paths": {
+      "smart-load-manager": ["../smart-load-manager/src"]
+    }
+  },
+  "include": [
+    "src",
+    "../smart-load-manager/src"
+  ]
+}

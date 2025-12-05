@@ -1,0 +1,26 @@
+smart-adsense {
+  display: block;
+  overflow: hidden;
+}
+
+smart-adsense[status=hidden] {
+  display: none;
+}
+
+.smart-adsense-container {
+  display: flex;
+  align-items: center;
+}
+
+.smart-adsense-container smart-adsense {
+  height: 100%;
+  width: 100%;
+}
+
+.smart-adsense-container smart-adsense[status=filled] {
+  height: auto;
+}
+
+.smart-adsense-container:has(smart-adsense[status=hidden]) {
+  display: none;
+}
