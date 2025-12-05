@@ -1,6 +1,6 @@
 # smart-load-manager
 
-Queued loader and utility toolkit for third-party scripts. Provides a configurable `SmartService` base class, a cooperative `SmartLoad` queue, and tiny helpers for defer/idle orchestration.
+A queued loader and utility toolkit for third-party scripts. Provides a configurable `SmartService` base class, a cooperative `SmartLoad` queue, and tiny helpers for defer/idle orchestration.
 
 ## Features
 
@@ -14,7 +14,7 @@ Queued loader and utility toolkit for third-party scripts. Provides a configurab
 npm install smart-load-manager @exadel/esl
 ```
 
-`smart-load-manager` relies on `@exadel/esl` (peer dependency) for decorators and async helpers. Modern package managers will warn if a compatible ESL version is missing; if your project already includes ESL, you can omit it from the command.
+`smart-load-manager` relies on [`@exadel/esl`](https://www.npmjs.com/package/@exadel/esl) as a peer dependency (you can learn more about ESL on the library [website](https://esl-ui.com/)) for decorators and async helpers. Modern package managers will warn if a compatible ESL version is missing; if your project already includes ESL, you can omit it from the command.
 
 ## Quick start
 
@@ -44,7 +44,7 @@ SmartLoad.queue(ads, async () => {
 SmartLoad.start();
 ```
 
-You configure each service once, queue them behind the dependency (or helper) they care about, and let `SmartLoad` serialize the actual script injections. The helpers keep the orchestration declarative—here ads only load after either the user interacts or a timeout fires.
+Each service is configured once, then queue them behind the dependency (or helper) they care about, and let `SmartLoad` serialize the actual script injections. The helpers keep the orchestration declarative—here ads only load after either the user interacts or a timeout fires.
 
 ## Configuration
 
@@ -215,7 +215,7 @@ SmartLoad.start();
 marketing.load().catch(() => console.log('?> Marketing failed! Will do something else...'));
 ```
 
-This example of load orchestration demonstrates the following. Three services are loaded: analytics, marketing, and ads. Analytics will start loading after the following chain of actions is completed:
+This load-orchestration example demonstrates the following: three services- analytics, marketing, and ads - are loaded. Analytics will start loading after the following chain of actions is completed:
  - preloading of analytics service
  - preconnecting to https://cdn.marketing.example and https://ads.example.net
  - waiting for user activity or browsers idle state (something that will happen first)

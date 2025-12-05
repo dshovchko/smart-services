@@ -1,10 +1,10 @@
 # smart-adsense
 
-Drop-in AdSense service configuration with a `<smart-adsense>` custom element for retry, refresh, and status tracking.
+A drop-in AdSense service configuration with a `<smart-adsense>` custom element for retry, refresh, and status tracking.
 
 ## Features
 
-- **Lazy loading element**: `loading="lazy"` + media-query `display` gate script execution until the slot is visible or matches a breakpoint.
+- **Lazy loading element**: `loading="lazy"` and  [Exadel Smart Library media query](https://esl-ui.com/core/esl-media-query/) `display` gate script execution until the slot is visible or matches a breakpoint.
 - **Retry + refresh orchestration**: configurable delay/count for unfilled slots and interval-based refresh when filled.
 - **Resize awareness**: if the `params` attribute sets `refreshOnResize=true`, a filled element re-renders whenever its width changes (attribute described in the Element API section).
 - **Mutation-based status detection** via `MutationObserver`, emitting `adsense:status` (`filled`, `unfilled`, `pending`, etc.).
@@ -15,7 +15,7 @@ Drop-in AdSense service configuration with a `<smart-adsense>` custom element fo
 - **Service (`SmartAdsense`)** - extends `SmartService` to own script loading, retries, refresh timers, and early-hint helpers. You can call it directly (`SmartAdsense.load()`, `SmartAdsense.preload()`, `SmartAdsense.setupEarlyHints()`) or wire it into `SmartLoad.queue()`.
 - **Element (`<smart-adsense>`)** - wraps the service so markup can express lazy/conditional activation (`loading`, `display`), resize awareness, and DOM events for status tracking.
 
-Typical flow: configure the service once (`SmartAdsense.config()`), register the element, and sprinkle `<smart-adsense>` components throughout templates. When you need bespoke orchestration, trigger the same service instance via `SmartLoad` or manual calls while the element reacts to `SmartAdsense.instance.load()` resolution.
+*Typical flow*: configure the service once (`SmartAdsense.config()`), register the element, and sprinkle `<smart-adsense>` components throughout templates. When you need bespoke orchestration, trigger the same service instance via `SmartLoad` or manual calls while the element reacts to `SmartAdsense.instance.load()` resolution.
 
 > ⚠️ `SmartAdsense.config()` mutates global defaults for the singleton service. Call it during bootstrap (before rendering elements) and avoid per-request overrides unless you intentionally change the global state.
 
@@ -27,9 +27,9 @@ Typical flow: configure the service once (`SmartAdsense.config()`), register the
 npm install smart-adsense smart-load-manager @exadel/esl
 ```
 
-`smart-adsense` wraps `smart-load-manager` and re-exports pieces from it. Both packages expect `@exadel/esl` as a peer dependency. Your package manager will prompt if ESL is missing; if your project already ships a compatible ESL build, you can skip it from the install command above.
+`smart-adsense` wraps `smart-load-manager` and re-exports pieces from it. Both packages expect [`@exadel/esl`](https://www.npmjs.com/package/@exadel/esl) as a peer dependency (you can learn more about ESL on the library [website](https://esl-ui.com/)). Your package manager will prompt if ESL is missing; if your project already ships a compatible ESL build, you can skip it from the install command above.
 
-The CSS file `smart-adsense.css` ships in `dist/`; copy or import it wherever you register the element.
+The CSS file `smart-adsense.css` ships in `dist/` folder - copy or import it wherever you register the element.
 
 ## Quick start
 
@@ -130,7 +130,7 @@ Use `SmartAdsense.config()` globally and override per-element via the `params` a
 
 | Attribute | Default | Purpose |
 | --- | --- | --- |
-| `display` | `all` | `ESLMediaQuery` expression controlling visibility/lazy init. |
+| `display` | `all` | (`ESLMediaQuery`)[https://esl-ui.com/core/esl-media-query/] expression controlling visibility/lazy init. |
 | `loading` | `lazy` | `lazy` waits for intersection, `eager` loads immediately. |
 | `params` | `{}` | JSON encoded partial `SmartAdsenseOptions`. |
 | `status` | `init` | Reflects current lifecycle (`init`, `pending`, `filled`, `unfilled`, `hidden`, `failed`). |
