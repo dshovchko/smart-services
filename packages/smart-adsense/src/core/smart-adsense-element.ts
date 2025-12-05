@@ -41,6 +41,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
     return {...SmartAdsense.config(), ...(this.params || {})};
   }
   /** ESLMediaQuery to limit display */
+  @memoize()
   protected get displayQuery(): ESLMediaQuery {
     return ESLMediaQuery.for(this.display);
   }
@@ -90,6 +91,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
   protected override attributeChangedCallback(attrName: string, oldVal: string, newVal: string): void {
     if (!this.connected) return;
     if (attrName === 'display') {
+      memoize.clear(this, 'displayQuery');
       this.$$on(this._onDisplayChange);
       this.init();
     }
