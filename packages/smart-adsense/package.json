@@ -1,0 +1,52 @@
+{
+  "name": "smart-adsense",
+  "version": "1.0.0",
+  "description": "A service and web component for enhanced loading and management of AdSense ad blocks in your web application",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dshovchko/smart-services.git",
+    "directory": "packages/smart-adsense"
+  },
+  "keywords": [
+    "ads",
+    "adsense",
+    "lazy-load",
+    "web-component",
+    "performance",
+    "optimization",
+    "core-web-vitals"
+  ],
+  "author": "Dmytro Shovchko",
+  "license": "MIT",
+  "dependencies": {
+    "smart-load-manager": "^1.0.0"
+  },
+  "scripts": {
+    "clear": "rm -rf dist",
+    "build": "npm run clear && pkgroll && cp src/smart-adsense.css dist/",
+    "lint": "eslint \"src/**/*.ts\" --max-warnings 3",
+    "test": "npm run type-check && npm run lint && npm run test:run",
+    "test:run": "vitest run",
+    "test:watch": "vitest watch",
+    "type-check": "tsc --noEmit -p tsconfig.type-check.json"
+  },
+  "peerDependencies": {
+    "@exadel/esl": "^5.15.0"
+  }
+}

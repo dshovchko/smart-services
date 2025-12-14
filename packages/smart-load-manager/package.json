@@ -1,0 +1,49 @@
+{
+  "name": "smart-load-manager",
+  "version": "1.0.0",
+  "description": "A service and add-on utilities for managing third-party service (e.g., AdSense) loading for your web application that help improve Core Web Vitals.",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dshovchko/smart-services.git",
+    "directory": "packages/smart-load-manager"
+  },
+  "keywords": [
+    "loader",
+    "manager",
+    "queue",
+    "page-speed",
+    "performance",
+    "optimization",
+    "core-web-vitals"
+  ],
+  "author": "Dmytro Shovchko",
+  "license": "MIT",
+  "scripts": {
+    "clear": "rm -rf dist",
+    "build": "npm run clear && pkgroll",
+    "lint": "eslint \"src/**/*.ts\" --max-warnings 3",
+    "test": "npm run type-check && npm run lint && npm run test:run",
+    "test:run": "vitest run",
+    "test:watch": "vitest watch",
+    "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@exadel/esl": "^5.15.0"
+  }
+}
