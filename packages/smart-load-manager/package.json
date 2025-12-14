@@ -20,15 +20,17 @@
   ],
   "repository": {
     "type": "git",
-    "url": "smart-repo",
-    "directory": "./packages/load"
+    "url": "git+https://github.com/dshovchko/smart-services.git",
+    "directory": "packages/smart-load-manager"
   },
   "keywords": [
-    "loading",
-    "script",
-    "lazy-loading",
-    "core-web-vitals",
-    "manager"
+    "loader",
+    "manager",
+    "queue",
+    "page-speed",
+    "performance",
+    "optimization",
+    "core-web-vitals"
   ],
   "author": "Dmytro Shovchko",
   "license": "MIT",

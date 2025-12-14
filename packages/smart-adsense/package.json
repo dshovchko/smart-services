@@ -20,19 +20,22 @@
   ],
   "repository": {
     "type": "git",
-    "url": "smart-repo",
-    "directory": "./packages/adsense"
+    "url": "git+https://github.com/dshovchko/smart-services.git",
+    "directory": "packages/smart-adsense"
   },
   "keywords": [
-    "loading",
+    "ads",
     "adsense",
-    "core-web-vitals",
-    "manager"
+    "lazy-load",
+    "web-component",
+    "performance",
+    "optimization",
+    "core-web-vitals"
   ],
   "author": "Dmytro Shovchko",
   "license": "MIT",
   "dependencies": {
-    "smart-load-manager": "../smart-load-manager"
+    "smart-load-manager": "^1.0.0"
   },
   "scripts": {
     "clear": "rm -rf dist",

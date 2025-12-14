@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "smart-services-repo"
+    "url": "git+https://github.com/dshovchko/smart-services.git"
   },
   "keywords": [
     "loading",
