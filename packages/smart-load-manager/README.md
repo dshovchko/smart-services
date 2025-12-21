@@ -1,5 +1,8 @@
 # smart-load-manager
 
+[![NPM Version](https://img.shields.io/npm/v/smart-load-manager)](https://www.npmjs.com/package/smart-load-manager)
+[![License](https://img.shields.io/npm/l/smart-load-manager)](https://github.com/dshovchko/smart-services/blob/main/packages/smart-load-manager/LICENSE)
+
 A queued loader and utility toolkit for third-party scripts. Provides a configurable `SmartService` base class, a cooperative `SmartLoad` queue, and tiny helpers for defer/idle orchestration.
 
 ## Features

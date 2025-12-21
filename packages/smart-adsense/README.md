@@ -1,5 +1,8 @@
 # smart-adsense
 
+[![NPM Version](https://img.shields.io/npm/v/smart-adsense)](https://www.npmjs.com/package/smart-adsense)
+[![License](https://img.shields.io/npm/l/smart-adsense)](https://github.com/dshovchko/smart-services/blob/main/packages/smart-adsense/LICENSE)
+
 A drop-in AdSense service configuration with a `<smart-adsense>` custom element for retry, refresh, and status tracking.
 
 ## Features
@@ -8,11 +11,11 @@ A drop-in AdSense service configuration with a `<smart-adsense>` custom element 
 - **Retry + refresh orchestration**: configurable delay/count for unfilled slots and interval-based refresh when filled.
 - **Resize awareness**: if the `params` attribute sets `refreshOnResize=true`, a filled element re-renders whenever its width changes (attribute described in the Element API section).
 - **Mutation-based status detection** via `MutationObserver`, emitting `adsense:status` (`filled`, `unfilled`, `pending`, etc.).
-- **SSR/CSR safe service** built on `smart-load-manager` (mutexed script loading, early hints, debug logging support).
+- **SSR/CSR safe service** built on [smart-load-manager](https://github.com/dshovchko/smart-services/tree/main/packages/smart-load-manager#readme) (mutexed script loading, early hints, debug logging support).
 
 ## Service vs. element
 
-- **Service (`SmartAdsense`)** - extends `SmartService` to own script loading, retries, refresh timers, and early-hint helpers. You can call it directly (`SmartAdsense.load()`, `SmartAdsense.preload()`, `SmartAdsense.setupEarlyHints()`) or wire it into `SmartLoad.queue()`.
+- **Service (`SmartAdsense`)** - extends [SmartService](https://github.com/dshovchko/smart-services/tree/main/packages/smart-load-manager#smartload-usage) to own script loading, retries, refresh timers, and early-hint helpers. You can call it directly (`SmartAdsense.load()`, `SmartAdsense.preload()`, `SmartAdsense.setupEarlyHints()`) or wire it into `SmartLoad.queue()`.
 - **Element (`<smart-adsense>`)** - wraps the service so markup can express lazy/conditional activation (`loading`, `display`), resize awareness, and DOM events for status tracking.
 
 *Typical flow*: configure the service once (`SmartAdsense.config()`), register the element, and sprinkle `<smart-adsense>` components throughout templates. When you need bespoke orchestration, trigger the same service instance via `SmartLoad` or manual calls while the element reacts to `SmartAdsense.instance.load()` resolution.
@@ -27,7 +30,7 @@ A drop-in AdSense service configuration with a `<smart-adsense>` custom element 
 npm install smart-adsense smart-load-manager @exadel/esl
 ```
 
-`smart-adsense` wraps `smart-load-manager` and re-exports pieces from it. Both packages expect [`@exadel/esl`](https://www.npmjs.com/package/@exadel/esl) as a peer dependency (you can learn more about ESL on the library [website](https://esl-ui.com/)). Your package manager will prompt if ESL is missing; if your project already ships a compatible ESL build, you can skip it from the install command above.
+`smart-adsense` wraps [smart-load-manager](https://www.npmjs.com/package/smart-load-manager) and re-exports pieces from it. Both packages expect [`@exadel/esl`](https://www.npmjs.com/package/@exadel/esl) as a peer dependency (you can learn more about ESL on the library [website](https://esl-ui.com/)). Your package manager will prompt if ESL is missing; if your project already ships a compatible ESL build, you can skip it from the install command above.
 
 The CSS file `smart-adsense.css` ships in `dist/` folder - copy or import it wherever you register the element.
 
@@ -199,5 +202,5 @@ document.body.appendChild(el);
 
 ## Compatibility & performance
 
-- **Browser support**: Requires ES2019+ syntax (async/await, optional chaining, nullish coalescing), Custom Elements, IntersectionObserver, ResizeObserver, and AbortController (same as `smart-load-manager`). Add polyfills before registering the element if you target legacy browsers (e.g., [@webcomponents/custom-elements](https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements), [intersection-observer](https://github.com/w3c/IntersectionObserver/tree/main/polyfill)).
-- **Performance impact**: The service defers AdSense execution via idle/interaction guards, reducing layout shifts and blocking time. Using `SmartLoad.queue()` serializes queued third-party script loads (not every resource), so only one ad/marketing script fetch runs at a time, which helps stabilize Core Web Vitals on ad-heavy pages.
+- **Browser support**: Requires ES2019+ syntax (async/await, optional chaining, nullish coalescing), Custom Elements, IntersectionObserver, ResizeObserver, and AbortController (same as [smart-load-manager](https://github.com/dshovchko/smart-services/tree/main/packages/smart-load-manager#readme)). Add polyfills before registering the element if you target legacy browsers (e.g., [@webcomponents/custom-elements](https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements), [intersection-observer](https://github.com/w3c/IntersectionObserver/tree/main/polyfill)).
+- **Performance impact**: The service defers AdSense execution via idle/interaction guards, reducing layout shifts and blocking time. Using [SmartLoad.queue()](https://github.com/dshovchko/smart-services/tree/main/packages/smart-load-manager#smartload-usage) serializes queued third-party script loads (not every resource), so only one ad/marketing script fetch runs at a time, which helps stabilize Core Web Vitals on ad-heavy pages.
