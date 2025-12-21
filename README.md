@@ -27,8 +27,8 @@ This toolkit fixes that.
 
 | Package | Description |
 |---|---|
-| `smart-load-manager` | core utilities and service orchestrator |
-| `smart-adsense`      | web component and helpers for AdSense blocks |
+| [`smart-load-manager`](https://www.npmjs.com/package/smart-load-manager) | core utilities and service orchestrator |
+| [`smart-adsense`](https://www.npmjs.com/package/smart-adsense) | web component and helpers for AdSense blocks |
 
 ## Perfect for
 

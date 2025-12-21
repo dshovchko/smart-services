@@ -1,6 +1,6 @@
 {
   "name": "smart-load-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A service and add-on utilities for managing third-party service (e.g., AdSense) loading for your web application that help improve Core Web Vitals.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -22,6 +22,10 @@
     "type": "git",
     "url": "git+https://github.com/dshovchko/smart-services.git",
     "directory": "packages/smart-load-manager"
+  },
+  "homepage": "https://github.com/dshovchko/smart-services/tree/main/packages/smart-load-manager#readme",
+  "bugs": {
+    "url": "https://github.com/dshovchko/smart-services/issues"
   },
   "keywords": [
     "loader",
