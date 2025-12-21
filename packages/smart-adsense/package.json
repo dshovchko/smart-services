@@ -1,6 +1,6 @@
 {
   "name": "smart-adsense",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A service and web component for enhanced loading and management of AdSense ad blocks in your web application",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -22,6 +22,10 @@
     "type": "git",
     "url": "git+https://github.com/dshovchko/smart-services.git",
     "directory": "packages/smart-adsense"
+  },
+  "homepage": "https://github.com/dshovchko/smart-services/tree/main/packages/smart-adsense#readme",
+  "bugs": {
+    "url": "https://github.com/dshovchko/smart-services/issues"
   },
   "keywords": [
     "ads",

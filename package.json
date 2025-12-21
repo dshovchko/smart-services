@@ -1,6 +1,6 @@
 {
   "name": "smart-services",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A set of smart tools that can improve the loading of third-party services (i.e. AdSense) for your web application",
   "workspaces": [
     "packages/smart-adsense",
