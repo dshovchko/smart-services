@@ -19,7 +19,7 @@ This monorepo provides tools to control *when* and *how* these scripts load:
 
 ### 1. Install
 
-Both packages depend on [`@exadel/esl`](https://github.com/exadel-inc/esl) — a lightweight library of web components used internally for intersection observation and event handling.
+Both packages require [`@exadel/esl`](https://github.com/exadel-inc/esl) as a **peer dependency**. It is a lightweight library that provides essential async helpers, decorators, DOM utilities, and web component primitives used internally by this toolkit.
 
 ```bash
 npm install smart-adsense smart-load-manager @exadel/esl
