@@ -40,6 +40,7 @@
   },
   "scripts": {
     "build": "npm run build --workspaces",
+    "prepublishOnly": "npm test && npm run build",
     "pack": "npm run build && npm pack --workspaces",
     "lint": "npm run lint --workspaces",
     "test": "npm run test --workspaces",
