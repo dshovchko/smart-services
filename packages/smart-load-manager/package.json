@@ -41,7 +41,8 @@
   "scripts": {
     "clear": "rm -rf dist",
     "build": "npm run clear && pkgroll",
-    "prepublishOnly": "npm test && npm run build",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test",
     "lint": "eslint \"src/**/*.ts\" --max-warnings 3",
     "test": "npm run type-check && npm run lint && npm run test:run",
     "test:run": "vitest run",
