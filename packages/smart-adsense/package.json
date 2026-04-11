@@ -1,6 +1,6 @@
 {
   "name": "smart-adsense",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A service and web component for enhanced loading and management of AdSense ad blocks in your web application",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

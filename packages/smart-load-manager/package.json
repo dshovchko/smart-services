@@ -1,6 +1,6 @@
 {
   "name": "smart-load-manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A service and add-on utilities for managing third-party service (e.g., AdSense) loading for your web application that help improve Core Web Vitals.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
