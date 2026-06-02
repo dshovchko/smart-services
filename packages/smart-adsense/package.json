@@ -1,6 +1,6 @@
 {
   "name": "smart-adsense",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A service and web component for enhanced loading and management of AdSense ad blocks in your web application",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -53,6 +53,6 @@
     "type-check": "tsc --noEmit -p tsconfig.type-check.json"
   },
   "peerDependencies": {
-    "@exadel/esl": "^5.15.0"
+    "@exadel/esl": "^5.15.0 || ^6.0.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "smart-load-manager",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A service and add-on utilities for managing third-party service (e.g., AdSense) loading for your web application that help improve Core Web Vitals.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -50,6 +50,6 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@exadel/esl": "^5.15.0"
+    "@exadel/esl": "^5.15.0 || ^6.0.0"
   }
 }
