@@ -79,6 +79,7 @@ describe('SmartAdsenseElement - _onResize Method', () => {
   // Helper to create base config
   const createConfig = (overrides = {}) => ({
     name: 'Adsense',
+    baseMargin: 1500,
     retryCount: 3,
     retryDelay: 5,
     refreshInterval: 30,

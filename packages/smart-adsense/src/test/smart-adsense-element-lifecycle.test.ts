@@ -130,6 +130,13 @@ describe('SmartAdsenseElement - Lifecycle Methods', () => {
       expect(element['inactive']).toBe(false);
     });
 
+    test('should set status to init and update DOM attribute on connect', () => {
+      (element as any).connectedCallback();
+
+      expect(element.status).toBe('init');
+      expect(element.setAttribute).toHaveBeenCalledWith('status', 'init');
+    });
+
     test('should call all required initialization methods', () => {
       // Spy on the real methods
       const storeContentSpy = vi.spyOn(element as any, 'storeContent');

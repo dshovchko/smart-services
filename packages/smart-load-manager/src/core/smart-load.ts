@@ -2,6 +2,8 @@ import {memoize} from '@exadel/esl/modules/esl-utils/decorators';
 import {createDeferred} from '@exadel/esl/modules/esl-utils/async';
 import {SmartService} from './smart-service';
 
+type PreviousTask = (() => Promise<unknown>) | Promise<unknown>;
+
 function onReadyState(readyPredicate: () => boolean): Promise<void> {
   return new Promise((resolve) => {
     if (readyPredicate()) {
@@ -46,12 +48,12 @@ export class SmartLoad {
     return onReadyState(() => document.readyState === 'complete');
   }
 
-  protected static createMutex(previousTask: () => Promise<unknown>): Promise<void> {
+  protected static createMutex(previousTask: PreviousTask): Promise<void> {
     return new Promise<void>((resolve) => {
       (async (): Promise<void> => {
         try {
           await this._whenStarted.promise;
-          await previousTask();
+          await (typeof previousTask === 'function' ? previousTask() : previousTask);
         } catch (e) {
           // ignore
         } finally {
@@ -62,7 +64,7 @@ export class SmartLoad {
   }
 
   /** Queue a service to be loaded after the given task */
-  public static queue(service: typeof SmartService | SmartService, after: () => Promise<unknown> = this.defaultMutex.bind(this)): void {
+  public static queue(service: typeof SmartService | SmartService, after: PreviousTask = this.defaultMutex.bind(this)): void {
     const serviceInstance = service instanceof SmartService ? service : service.instance;
     serviceInstance.mutex = this.createMutex(after);
     serviceInstance.load().catch(() => void 0);

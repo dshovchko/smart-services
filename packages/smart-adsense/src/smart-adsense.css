@@ -15,10 +15,12 @@ smart-adsense[status=hidden] {
 .smart-adsense-container smart-adsense {
   height: 100%;
   width: 100%;
+  min-height: inherit;
 }
 
 .smart-adsense-container smart-adsense[status=filled] {
   height: auto;
+  min-height: 0;
 }
 
 .smart-adsense-container:has(smart-adsense[status=hidden]) {

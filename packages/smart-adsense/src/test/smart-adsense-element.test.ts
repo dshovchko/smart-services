@@ -42,11 +42,31 @@ describe('SmartAdsenseElement', () => {
     expect(customElements.get('smart-adsense')).toBe(SmartAdsenseElement);
   });
 
+  test('should not throw or set attributes during createElement', () => {
+    expect(() => {
+      const el = document.createElement('smart-adsense');
+      expect(el.attributes.length).toBe(0);
+    }).not.toThrow();
+  });
+
   test('should have default attributes', () => {
     expect($el.display).toBe('all');
     expect($el.loading).toBe('lazy');
     expect($el.inactive).toBe(true);
     expect($el.status).toBe('init');
+    expect($el.getAttribute('status')).toBe('init');
+  });
+
+  test('should preserve params attribute from HTML and apply to config', () => {
+    const container = document.createElement('div');
+    container.innerHTML = '<smart-adsense params="{refreshInterval:99,retryDelay:15,retryCount:7}"></smart-adsense>';
+    document.body.appendChild(container);
+
+    const el = container.querySelector('smart-adsense') as SmartAdsenseElement;
+    expect(el.getAttribute('params')).toBe('{refreshInterval:99,retryDelay:15,retryCount:7}');
+    expect(el.config.refreshInterval).toBe(99);
+    expect(el.config.retryDelay).toBe(15);
+    expect(el.config.retryCount).toBe(7);
   });
 
   test('should store and restore content', () => {
@@ -57,14 +77,22 @@ describe('SmartAdsenseElement', () => {
     expect($el.innerHTML).toBe('<ins class="adsbygoogle"></ins>');
   });
 
-  test('should calculate connection ratio', () => {
+  test('should calculate connection ratio and rootMargin', () => {
+    (navigator as any).connection.effectiveType = '4g';
     expect(($el as any).connectionRatio).toBe(1); // 4g default
+    expect(($el as any).rootMargin).toBe('1500px');
 
     (navigator as any).connection.effectiveType = '2g';
     expect(($el as any).connectionRatio).toBe(2);
+    expect(($el as any).rootMargin).toBe('3000px');
 
     (navigator as any).connection.effectiveType = '3g';
     expect(($el as any).connectionRatio).toBe(1.5);
+    expect(($el as any).rootMargin).toBe('2250px');
+
+    (navigator as any).connection.effectiveType = '4g';
+    $el.params = {baseMargin: 2000};
+    expect(($el as any).rootMargin).toBe('2000px');
   });
 
   test('should handle status changes', () => {

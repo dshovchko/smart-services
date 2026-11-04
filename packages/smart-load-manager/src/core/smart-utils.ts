@@ -25,6 +25,16 @@ const IDLE_THRESHOLD_DURATION = 46.6;
 const IDLE_THRESHOLD_RATIO = 0.9;
 const IDLE_TIMEOUT = 10000;
 
+const reqIdle = (cb: IdleRequestCallback, opts?: IdleRequestOptions): number => (
+  typeof requestIdleCallback === 'function'
+    ? requestIdleCallback(cb, opts)
+    : setTimeout(() => cb({didTimeout: false, timeRemaining: () => 50}), 1) as unknown as number
+);
+const cancelIdle = (id?: number): void => {
+  if (id === undefined) return;
+  typeof cancelIdleCallback === 'function' ? cancelIdleCallback(id) : clearTimeout(id);
+};
+
 /** Promisify requestIdleCallback with enhanced idle detection
  * The promise resolves when the browser is considered idle based on:
  * - ratio of idle time to frame time over a series of frames
@@ -44,11 +54,16 @@ export function promisifyIdle(options: PromisifyIdleOptions = {}): Promise<any> 
   return new Promise((resolve, reject) => {
     const start = performance.now();
     let previousFrameEnd = start;
+    let idleId: number | undefined;
+    let settled = false;
     const log: (string | number)[][] = [];
-
     const last3 = [0, 0, 0];
 
     function finish(withResolve: boolean, reason?: any): void {
+      if (settled) return;
+      settled = true;
+      !withResolve && cancelIdle(idleId);
+      signal?.removeEventListener('abort', onAbort);
       if (debug) {
         console.table(log);
         console.log(`Idle has ${withResolve ? 'reached' : 'aborted'} after ${performance.now() - start}ms`);
@@ -57,16 +72,17 @@ export function promisifyIdle(options: PromisifyIdleOptions = {}): Promise<any> 
       }
       return withResolve ? resolve(true) : reject(reason);
     }
+    const onAbort = (): void => finish(false, new Error('Rejected by abort signal'));
+    if (signal?.aborted) return onAbort();
+    signal?.addEventListener('abort', onAbort, {once: true});
 
     const cb: IdleRequestCallback = (deadline: IdleDeadline) => {
-      if (signal?.aborted) return finish(false, new Error('Rejected by abort signal'));
-
+      if (signal?.aborted) return onAbort();
       const allocated = deadline.timeRemaining();
       const frameEnd = performance.now() + allocated;
       const frameLength = frameEnd - previousFrameEnd;
       const idleRatio = allocated / frameLength;
       const timeout = Math.max(0, idleTimeout - (performance.now() - start));
-
       const isBadFrame = frameLength < 15;
       if (!isBadFrame) {
         last3.splice(0, 1);
@@ -77,10 +93,10 @@ export function promisifyIdle(options: PromisifyIdleOptions = {}): Promise<any> 
 
       if (isIdleNow || deadline.didTimeout) return finish(true);
       !isBadFrame && (previousFrameEnd = frameEnd);
-      requestIdleCallback(cb, {timeout});
+      idleId = reqIdle(cb, {timeout});
     };
 
-    requestIdleCallback(cb, {timeout: idleTimeout});
+    idleId = reqIdle(cb, {timeout: idleTimeout});
   });
 }
 
@@ -92,7 +108,7 @@ export function promisifyIdle(options: PromisifyIdleOptions = {}): Promise<any> 
  */
 export async function asyncSeries(tasks: AsyncTask[]): Promise<void> {
   for (const task of tasks) {
-    await task().catch();
+    await task().catch(() => void 0);
   }
 }
 
@@ -145,5 +161,5 @@ export function waitUserActivity(): WaitTask {
  * @returns A wait task that resolves when the browser is idle
  */
 export function waitIdle(options: PromisifyIdleOptions = {}): WaitTask {
-  return async (abortSignal: AbortSignal) => promisifyIdle({...options, signal: abortSignal});
+  return async (abortSignal?: AbortSignal) => promisifyIdle({...options, signal: abortSignal ?? options.signal});
 }
