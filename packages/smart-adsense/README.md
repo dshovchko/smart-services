@@ -91,7 +91,7 @@ import {SmartAdsense} from 'smart-adsense';
 
 SmartAdsense.config({url: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX'});
 
-SmartLoad.queue(SmartAdsense, async () => waitAny([
+SmartLoad.queue(SmartAdsense, waitAny([
   // Wait until the browser provides ~50ms of idle time
   waitIdle({thresholds: {duration: 50, ratio: 0.9}, timeout: 8000}),
   // or until the user interacts with the page

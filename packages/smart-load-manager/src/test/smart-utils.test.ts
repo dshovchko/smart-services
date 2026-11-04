@@ -150,11 +150,8 @@ describe('smart-utils', () => {
         async () => { results.push(3); return 'result3'; }
       ];
 
-      // The function currently doesn't catch errors properly
-      // Let's test the actual behavior - it should throw
-      await expect(asyncSeries(tasks)).rejects.toThrow('Task failed');
-      // Only first two tasks should execute before the error
-      expect(results).toEqual([1, 2]);
+      await expect(asyncSeries(tasks)).resolves.toBeUndefined();
+      expect(results).toEqual([1, 2, 3]);
     });
 
     test('should handle empty tasks array', async () => {

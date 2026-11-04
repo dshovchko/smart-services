@@ -50,7 +50,12 @@ export class SmartService {
   /** Get or set the service configuration */
   public static config<T>(options?: T): T;
   public static config(options?: SmartServiceOptions): SmartServiceOptions {
-    if (options) this._config = {...this._config, ...options};
+    if (options) {
+      this._config = {...this._config, ...options};
+      if (Object.prototype.hasOwnProperty.call(this, '_instance') && this._instance) {
+        this._instance._config = this._config;
+      }
+    }
     return this._config;
   }
 
@@ -61,7 +66,7 @@ export class SmartService {
 
   /** Get the singleton instance of SmartService */
   public static get instance(): SmartService {
-    if (!this._instance) {
+    if (!Object.prototype.hasOwnProperty.call(this, '_instance') || !this._instance) {
       this._instance = new this(this._config);
     }
     return this._instance;

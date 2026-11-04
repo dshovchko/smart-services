@@ -63,6 +63,23 @@ describe('SmartService', () => {
       expect(instance1).toBeInstanceOf(SmartService);
     });
 
+    test('config should update existing singleton instance config', () => {
+      const instance = SmartService.instance;
+      const newConfig = {name: 'updated-service', url: 'https://updated.com/script.js'};
+      SmartService.config(newConfig);
+
+      expect(instance['_config']).toEqual({name: 'updated-service', url: 'https://updated.com/script.js', debug: false});
+    });
+
+    test('subclass should have its own singleton instance', () => {
+      class SubService extends SmartService {}
+      const baseInstance = SmartService.instance;
+      const subInstance = SubService.instance;
+
+      expect(subInstance).toBeInstanceOf(SubService);
+      expect(subInstance).not.toBe(baseInstance);
+    });
+
     test('load static method should call instance load', async () => {
       const mockLoad = vi.fn().mockResolvedValue(true);
       vi.spyOn(SmartService, 'instance', 'get').mockReturnValue({

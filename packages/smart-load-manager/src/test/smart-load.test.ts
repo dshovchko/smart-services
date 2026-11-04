@@ -271,4 +271,21 @@ describe('SmartLoad', () => {
     SmartLoad.start();
     expect(log).toEqual(['mock2', 'mock1']);
   });
+
+  test('queue should support passing a Promise directly as after', async () => {
+    const deferred = createDeferred<void>();
+    const mockService = MockService.create({name: 'mock-promise', url: 'mock-url'});
+
+    SmartLoad.queue(mockService, deferred.promise);
+    SmartLoad.start();
+
+    let resolved = false;
+    mockService.mutex.then(() => { resolved = true; });
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(resolved).toBe(false);
+
+    deferred.resolve();
+    await expect(mockService.mutex).resolves.toBeUndefined();
+  });
 });
