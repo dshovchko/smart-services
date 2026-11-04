@@ -42,6 +42,7 @@ import 'smart-adsense/dist/smart-adsense.css';
 
 SmartAdsense.config({
   url: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX',
+  baseMargin: 1500,
   retryDelay: 20,
   retryCount: 3,
   refreshInterval: 0,
@@ -108,6 +109,7 @@ This pattern defers AdSense bootstrapping until the page settles (e.g., after ab
 
 | Option | Type | Description |
 | --- | --- | --- |
+| `baseMargin` | `number` | Base `rootMargin` in pixels for lazy-loading `IntersectionObserver` (multiplied by connection ratio; default `1500`). |
 | `retryDelay` | `number` | Seconds before retrying unfilled units (0 disables retries). |
 | `retryCount` | `number` | Max number of retries; `0` = unlimited. |
 | `refreshInterval` | `number` | Seconds before refreshing filled ads; `0` disables refresh. |

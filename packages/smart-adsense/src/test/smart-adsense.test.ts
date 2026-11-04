@@ -5,6 +5,7 @@ import {SmartAdsense} from '../core/smart-adsense';
 describe('SmartAdsense', () => {
   const defaultConfig = {
     name: 'Adsense',
+    baseMargin: 1500,
     retryDelay: 20,
     retryCount: 3,
     refreshInterval: 0,

@@ -16,7 +16,6 @@ export class SmartAdsenseElement extends ESLBaseElement {
   public static override is = 'smart-adsense';
   public static observedAttributes = ['display'];
 
-  @prop(750) baseMargin: number;
   @prop([0, 0.01]) protected INTERSECTION_THRESHOLD: number[];
   @prop('smart-adsense:change') public CHANGE_EVENT: string;
 
@@ -25,18 +24,17 @@ export class SmartAdsenseElement extends ESLBaseElement {
   /** Ad loading strategy ('lazy' or 'eager'). Default: `lazy` */
   @attr({defaultValue: 'lazy'}) public loading: string;
   /** Configuration parameters for SmartAdsense */
-  @jsonAttr<Partial<SmartAdsenseOptions>>() public params: Partial<SmartAdsenseOptions> = {};
+  @jsonAttr<Partial<SmartAdsenseOptions>>() public params: Partial<SmartAdsenseOptions>;
   /** Inactive state of the ad (not loaded until becomes active) */
-  @boolAttr() public inactive: boolean = true;
+  @boolAttr() public inactive: boolean;
 
   protected _content: string = '';
   protected _lastWidth: number = 0;
   protected _retries: number = 0;
-  protected _status: string = 'init';
+  protected _status: string = '';
   protected _task: DelayedTask = new DelayedTask();
 
   /** Current configuration */
-  @memoize()
   public get config(): SmartAdsenseOptions {
     return {...SmartAdsense.config(), ...(this.params || {})};
   }
@@ -61,7 +59,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
 
   /** IntersectionObserver rootMargin value */
   protected get rootMargin(): string {
-    return `${this.baseMargin * this.connectionRatio}px`;
+    return `${this.config.baseMargin * this.connectionRatio}px`;
   }
 
   /** Connection speed ratio */
@@ -78,6 +76,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
   protected override connectedCallback(): void {
     super.connectedCallback();
     this.inactive = this.loading !== 'eager';
+    this.status = 'init';
     this.storeContent();
     this.init();
     this.initA11y();

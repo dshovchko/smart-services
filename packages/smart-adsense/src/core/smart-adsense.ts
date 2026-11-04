@@ -10,6 +10,8 @@ interface AdElement extends HTMLElement {
 
 /** Configuration options for SmartAdsense */
 export interface SmartAdsenseOptions extends SmartServiceOptions {
+  /** Base rootMargin in pixels for lazy loading intersection observer */
+  baseMargin: number;
   /** Retrying unfilled ads: delay between retry attempts in seconds, 0 means no retrying */
   retryDelay: number;
   /** Retrying unfilled ads: number of retry attempts, 0 means infinite */
@@ -28,6 +30,7 @@ const ADSBYGOOGLE_STATUS_ATTR = 'data-adsbygoogle-status';
 export class SmartAdsense extends SmartService {
   protected static override _config: SmartAdsenseOptions = {
     name: 'Adsense',
+    baseMargin: 1500,
     retryDelay: 20,
     retryCount: 3,
     refreshInterval: 0,
