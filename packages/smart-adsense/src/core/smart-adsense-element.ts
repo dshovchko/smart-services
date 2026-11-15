@@ -148,6 +148,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
   @bind
   protected hideAd(): void {
     this._task.cancel();
+    this.$$off(this.refreshWhenVisible);
     if (typeof document !== 'undefined') {
       document.removeEventListener('visibilitychange', this.refreshWhenVisible);
     }
@@ -178,7 +179,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
     if (!viewportHeight || !viewportWidth) return true;
 
     const rect = this.getBoundingClientRect();
-    if (rect.width <= 0 && rect.height <= 0) return true;
+    if (rect.width <= 0 || rect.height <= 0) return false;
 
     const visibleHeight = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
     const visibleWidth = Math.max(0, Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0));
@@ -189,6 +190,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
   /** Executes scheduled refresh only when tab is active and element is in viewport */
   @bind
   protected refreshWhenVisible(): void {
+    if (this.inactive || !this.displayQuery.matches || this.status === 'hidden') return;
     if (!this.isDocumentVisible) {
       document.addEventListener('visibilitychange', this.refreshWhenVisible, {once: true});
       return;
@@ -215,8 +217,11 @@ export class SmartAdsenseElement extends ESLBaseElement {
     const {contentRect} = event;
     if (this._lastWidth === contentRect.width) return;
     if (this._lastWidth > 0 && Math.abs(this._lastWidth - contentRect.width) < (this.RESIZE_THRESHOLD ?? 25)) return;
-    if (this._lastWidth > 0 && this.status === 'filled') {
+    const {maxRefreshes = 0} = this.config;
+    const canRefresh = maxRefreshes === 0 || this._refreshes < maxRefreshes;
+    if (this._lastWidth > 0 && this.status === 'filled' && canRefresh) {
       this._retries = 0;
+      this._refreshes++;
       this._task.put(this.refreshAd, 0);
       this._log('Ad is refreshing on resize', this._lastWidth);
     }
@@ -226,6 +231,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
   /** Handles adsense status change */
   @listen('adsense:status')
   protected _onAdsenseStatusChange(event: CustomEvent): void {
+    if (this.status === event.detail) return;
     this._log('Ad status:', event.detail);
     this.status = event.detail;
     if (event.detail === 'unfilled') {

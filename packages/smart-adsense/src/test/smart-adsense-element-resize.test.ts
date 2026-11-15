@@ -228,6 +228,28 @@ describe('SmartAdsenseElement - _onResize Method', () => {
     expect(element['_lastWidth']).toBe(200);
   });
 
+  test('should respect maxRefreshes and increment _refreshes on resize refresh', () => {
+    element['_lastWidth'] = 100;
+    element['_status'] = 'filled';
+    element['_refreshes'] = 1;
+
+    vi.spyOn(element, 'config', 'get').mockReturnValue(createConfig({
+      refreshOnResize: true,
+      maxRefreshes: 2
+    }));
+
+    // 2nd refresh allowed
+    element['_onResize']({contentRect: {width: 200}} as any);
+    expect(element['_refreshes']).toBe(2);
+    expect(element['_task'].put).toHaveBeenCalledTimes(1);
+
+    // 3rd refresh blocked by maxRefreshes: 2
+    element['_onResize']({contentRect: {width: 300}} as any);
+    expect(element['_refreshes']).toBe(2);
+    expect(element['_task'].put).toHaveBeenCalledTimes(1);
+    expect(element['_lastWidth']).toBe(300);
+  });
+
   test('should update lastWidth regardless of refresh conditions', () => {
     // Setup initial state
     element['_lastWidth'] = 100;

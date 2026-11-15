@@ -348,6 +348,20 @@ describe('SmartAdsenseElement - _onAdsenseStatusChange Method', () => {
     expect(element['_task'].put).not.toHaveBeenCalled();
   });
 
+  test('should ignore duplicate status notifications without incrementing counters', () => {
+    element['_retries'] = 0;
+
+    const unfilledEvent = new CustomEvent('adsense:status', {detail: 'unfilled'});
+    element['_onAdsenseStatusChange'](unfilledEvent);
+    expect(element['_retries']).toBe(1);
+    expect(element['_task'].put).toHaveBeenCalledTimes(1);
+
+    // Duplicate unfilled event before refresh runs
+    element['_onAdsenseStatusChange'](unfilledEvent);
+    expect(element['_retries']).toBe(1);
+    expect(element['_task'].put).toHaveBeenCalledTimes(1);
+  });
+
   test('should handle boundary condition just over retry count', () => {
     // Test one over the boundary
     element['_retries'] = 3;
