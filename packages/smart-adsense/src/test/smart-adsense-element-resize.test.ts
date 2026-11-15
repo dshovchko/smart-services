@@ -80,9 +80,10 @@ describe('SmartAdsenseElement - _onResize Method', () => {
   const createConfig = (overrides = {}) => ({
     name: 'Adsense',
     baseMargin: 1500,
-    retryCount: 3,
+    retryCount: 2,
     retryDelay: 5,
     refreshInterval: 30,
+    maxRefreshes: 10,
     refreshOnResize: true,
     attrs: {crossorigin: 'anonymous' as const},
     ...overrides
@@ -132,7 +133,7 @@ describe('SmartAdsenseElement - _onResize Method', () => {
     expect(element['_lastWidth']).toBe(200);
   });
 
-  test('should not refresh ad when width has not changed', () => {
+  test('should not refresh ad when width has not changed or changed less than threshold (25px)', () => {
     // Setup initial state with same width
     element['_lastWidth'] = 100;
     element['_status'] = 'filled';
@@ -143,15 +144,13 @@ describe('SmartAdsenseElement - _onResize Method', () => {
     }));
 
     // Create resize event with same width
-    const resizeEvent = {
-      contentRect: {width: 100}
-    } as any;
-
-    // Call _onResize method
-    element['_onResize'](resizeEvent);
-
-    // Verify no refresh is scheduled
+    element['_onResize']({contentRect: {width: 100}} as any);
     expect(element['_task'].put).not.toHaveBeenCalled();
+
+    // Create resize event with minor change (< 25px, e.g. scrollbar 17px)
+    element['_onResize']({contentRect: {width: 117}} as any);
+    expect(element['_task'].put).not.toHaveBeenCalled();
+    expect(element['_lastWidth']).toBe(100);
   });
 
   test('should not refresh ad when status is not filled', () => {

@@ -18,6 +18,8 @@ export interface SmartAdsenseOptions extends SmartServiceOptions {
   retryCount: number;
   /** Refreshing filled ads: interval in seconds, 0 means no refresh */
   refreshInterval: number;
+  /** Refreshing filled ads: maximum number of refreshes per slot, 0 means infinite */
+  maxRefreshes: number;
   /** Refreshing filled ads: refresh on ad block resize, false means no refresh */
   refreshOnResize: boolean;
 }
@@ -31,9 +33,10 @@ export class SmartAdsense extends SmartService {
   protected static override _config: SmartAdsenseOptions = {
     name: 'Adsense',
     baseMargin: 1500,
-    retryDelay: 20,
-    retryCount: 3,
+    retryDelay: 30,
+    retryCount: 2,
     refreshInterval: 0,
+    maxRefreshes: 10,
     refreshOnResize: false,
     attrs: {crossorigin: 'anonymous'}
   };
@@ -43,7 +46,6 @@ export class SmartAdsense extends SmartService {
     const mutation$$ = new MutationObserver(this._onMutation);
     mutation$$.observe(document.documentElement, {
       subtree: true,
-      childList: true,
       attributes: true,
       attributeFilter: [AD_STATUS_ATTR, ADSBYGOOGLE_STATUS_ATTR]
     });

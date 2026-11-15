@@ -32,6 +32,7 @@ vi.mock('@exadel/esl/modules/esl-utils/async', () => ({
   debounce: vi.fn((fn: (...args: any[]) => any) => fn),
   DelayedTask: class {
     put = vi.fn();
+    cancel = vi.fn();
   },
   microtask: vi.fn()
 }));
@@ -171,14 +172,16 @@ describe('SmartAdsenseElement - Lifecycle Methods', () => {
   });
 
   describe('disconnectedCallback', () => {
-    test('should call restoreContent when disconnected', () => {
+    test('should cancel scheduled tasks and call restoreContent when disconnected', () => {
       // Spy on the real method
       const restoreContentSpy = vi.spyOn(element as any, 'restoreContent');
+      const cancelSpy = vi.spyOn(element['_task'], 'cancel');
 
       // Call disconnectedCallback
       (element as any).disconnectedCallback();
 
-      // Verify restoreContent is called
+      // Verify task cancel and restoreContent are called
+      expect(cancelSpy).toHaveBeenCalled();
       expect(restoreContentSpy).toHaveBeenCalled();
     });
 

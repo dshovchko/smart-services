@@ -131,11 +131,54 @@ describe('SmartAdsenseElement', () => {
     expect(pushSpy).toHaveBeenCalledWith({});
   });
 
-  test('should hide ad when display query does not match', () => {
+  test('should hide ad when display query does not match and cancel pending tasks', () => {
+    const cancelSpy = vi.spyOn(($el as any)._task, 'cancel');
     vi.spyOn(($el as any).displayQuery, 'matches', 'get').mockReturnValue(false);
     ($el as any).hideAd();
+    expect(cancelSpy).toHaveBeenCalled();
     expect($el.status).toBe('hidden');
     expect($el.innerHTML).toBe('');
+  });
+
+  test('should defer refreshWhenVisible when document is hidden until visibilitychange', () => {
+    const refreshSpy = vi.fn();
+    ($el as any).refreshAd = refreshSpy;
+    let hidden = true;
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => (hidden ? 'hidden' : 'visible')
+    });
+
+    ($el as any).refreshWhenVisible();
+    expect(refreshSpy).not.toHaveBeenCalled();
+
+    hidden = false;
+    document.dispatchEvent(new Event('visibilitychange'));
+    expect(refreshSpy).toHaveBeenCalledTimes(1);
+    delete (document as any).visibilityState;
+  });
+
+  test('should defer refreshWhenVisible when element is out of viewport', () => {
+    const refreshSpy = vi.fn();
+    ($el as any).refreshAd = refreshSpy;
+    const onSpy = vi.spyOn($el as any, '$$on').mockImplementation(() => {});
+    (window as any).innerHeight = 800;
+    (window as any).innerWidth = 1200;
+    vi.spyOn($el, 'getBoundingClientRect').mockReturnValue({
+      top: -500,
+      bottom: -200,
+      left: 0,
+      right: 300,
+      width: 300,
+      height: 300
+    } as DOMRect);
+
+    ($el as any).refreshWhenVisible();
+    expect(refreshSpy).not.toHaveBeenCalled();
+    expect(onSpy).toHaveBeenCalled();
+
+    delete (window as any).innerHeight;
+    delete (window as any).innerWidth;
   });
 
   test('should handle resize events', () => {
