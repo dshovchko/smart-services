@@ -17,6 +17,8 @@ export class SmartAdsenseElement extends ESLBaseElement {
   public static observedAttributes = ['display'];
 
   @prop([0, 0.01]) protected INTERSECTION_THRESHOLD: number[];
+  @prop(0.5) protected VIEWABLE_THRESHOLD: number;
+  @prop(25) protected RESIZE_THRESHOLD: number;
   @prop('smart-adsense:change') public CHANGE_EVENT: string;
 
   /** Condition {@link ESLMediaQuery} to allow display of ad. Default: `all` */
@@ -31,6 +33,7 @@ export class SmartAdsenseElement extends ESLBaseElement {
   protected _content: string = '';
   protected _lastWidth: number = 0;
   protected _retries: number = 0;
+  protected _refreshes: number = 0;
   protected _status: string = '';
   protected _task: DelayedTask = new DelayedTask();
 
@@ -84,6 +87,10 @@ export class SmartAdsenseElement extends ESLBaseElement {
 
   protected override disconnectedCallback(): void {
     super.disconnectedCallback();
+    this._task.cancel();
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', this.refreshWhenVisible);
+    }
     this.restoreContent();
   }
 
@@ -140,18 +147,63 @@ export class SmartAdsenseElement extends ESLBaseElement {
   /** Hides the ad */
   @bind
   protected hideAd(): void {
+    this._task.cancel();
+    this.$$off(this.refreshWhenVisible);
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', this.refreshWhenVisible);
+    }
     this.status = 'hidden';
     this.innerHTML = '';
     this._retries = 0;
+    this._refreshes = 0;
   }
 
   /** Refreshes the ad */
   @bind
   protected refreshAd(): void {
     this.status = 'pending';
-    this._retries++;
     this.restoreContent();
     this.pushAd();
+  }
+
+  /** Checks if document is visible */
+  protected get isDocumentVisible(): boolean {
+    return typeof document === 'undefined' || document.visibilityState !== 'hidden';
+  }
+
+  /** Checks if ad element is sufficiently visible in the viewport */
+  protected get isInViewport(): boolean {
+    if (typeof window === 'undefined' || typeof this.getBoundingClientRect !== 'function') return true;
+    const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+    const viewportWidth = window.innerWidth || document.documentElement?.clientWidth || 0;
+    if (!viewportHeight || !viewportWidth) return true;
+
+    const rect = this.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return false;
+
+    const visibleHeight = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+    const visibleWidth = Math.max(0, Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0));
+    const ratio = (visibleWidth * visibleHeight) / (rect.width * rect.height);
+    return ratio >= (this.VIEWABLE_THRESHOLD ?? 0.5);
+  }
+
+  /** Executes scheduled refresh only when tab is active and element is in viewport */
+  @bind
+  protected refreshWhenVisible(): void {
+    if (this.inactive || !this.displayQuery.matches || this.status === 'hidden') return;
+    if (!this.isDocumentVisible) {
+      document.addEventListener('visibilitychange', this.refreshWhenVisible, {once: true});
+      return;
+    }
+    if (!this.isInViewport) {
+      this.$$on({
+        event: ESLIntersectionEvent.IN,
+        once: true,
+        target: ESLIntersectionTarget.for(this, {threshold: this.VIEWABLE_THRESHOLD ?? 0.5})
+      }, this.refreshWhenVisible);
+      return;
+    }
+    this.refreshAd();
   }
 
   /** Handles resize of ad */
@@ -164,8 +216,12 @@ export class SmartAdsenseElement extends ESLBaseElement {
   protected _onResize(event: ESLElementResizeEvent): void {
     const {contentRect} = event;
     if (this._lastWidth === contentRect.width) return;
-    if (this._lastWidth > 0 && this.status === 'filled') {
+    if (this._lastWidth > 0 && Math.abs(this._lastWidth - contentRect.width) < (this.RESIZE_THRESHOLD ?? 25)) return;
+    const {maxRefreshes = 0} = this.config;
+    const canRefresh = maxRefreshes === 0 || this._refreshes < maxRefreshes;
+    if (this._lastWidth > 0 && this.status === 'filled' && canRefresh) {
       this._retries = 0;
+      this._refreshes++;
       this._task.put(this.refreshAd, 0);
       this._log('Ad is refreshing on resize', this._lastWidth);
     }
@@ -175,21 +231,26 @@ export class SmartAdsenseElement extends ESLBaseElement {
   /** Handles adsense status change */
   @listen('adsense:status')
   protected _onAdsenseStatusChange(event: CustomEvent): void {
+    if (this.status === event.detail) return;
     this._log('Ad status:', event.detail);
     this.status = event.detail;
     if (event.detail === 'unfilled') {
       const {retryCount, retryDelay} = this.config;
       const canRetry = retryCount === 0 || this._retries < retryCount;
       if (retryDelay > 0 && canRetry) {
-        this._task.put(this.refreshAd, retryDelay * 1000);
+        this._retries++;
+        this._task.put(this.refreshWhenVisible, retryDelay * 1000);
         this._log(`Ad unfilled will be reattempted in ${retryDelay}s (${this._retries})`);
       }
-    } else {
-      const {refreshInterval} = this.config;
+    } else if (event.detail === 'filled') {
+      this._retries = 0;
+      const {refreshInterval, maxRefreshes = 0} = this.config;
+      const canRefresh = maxRefreshes === 0 || this._refreshes < maxRefreshes;
       this._log('Refresh interval:', refreshInterval);
-      if (refreshInterval > 0) {
-        this._task.put(this.refreshAd, (refreshInterval + Math.random()) * 1000);
-        this._log(`Ad filled will be refreshed in ${refreshInterval}s [${this._retries}]`);
+      if (refreshInterval > 0 && canRefresh) {
+        this._refreshes++;
+        this._task.put(this.refreshWhenVisible, (refreshInterval + Math.random()) * 1000);
+        this._log(`Ad filled will be refreshed in ${refreshInterval}s [${this._refreshes}]`);
       }
     }
   }

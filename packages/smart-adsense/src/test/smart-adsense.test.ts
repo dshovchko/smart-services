@@ -6,9 +6,10 @@ describe('SmartAdsense', () => {
   const defaultConfig = {
     name: 'Adsense',
     baseMargin: 1500,
-    retryDelay: 20,
-    retryCount: 3,
+    retryDelay: 30,
+    retryCount: 2,
     refreshInterval: 0,
+    maxRefreshes: 10,
     refreshOnResize: false,
     attrs: {crossorigin: 'anonymous'}
   };

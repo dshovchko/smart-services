@@ -43,9 +43,10 @@ import 'smart-adsense/dist/smart-adsense.css';
 SmartAdsense.config({
   url: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX',
   baseMargin: 1500,
-  retryDelay: 20,
-  retryCount: 3,
+  retryDelay: 30,
+  retryCount: 2,
   refreshInterval: 0,
+  maxRefreshes: 10,
   refreshOnResize: false,
 });
 
@@ -110,10 +111,11 @@ This pattern defers AdSense bootstrapping until the page settles (e.g., after ab
 | Option | Type | Description |
 | --- | --- | --- |
 | `baseMargin` | `number` | Base `rootMargin` in pixels for lazy-loading `IntersectionObserver` (multiplied by connection ratio; default `1500`). |
-| `retryDelay` | `number` | Seconds before retrying unfilled units (0 disables retries). |
-| `retryCount` | `number` | Max number of retries; `0` = unlimited. |
-| `refreshInterval` | `number` | Seconds before refreshing filled ads; `0` disables refresh. |
-| `refreshOnResize` | `boolean` | Refresh when element width changes after a filled state. |
+| `retryDelay` | `number` | Seconds before retrying unfilled units (`0` disables retries; default `30`). |
+| `retryCount` | `number` | Max number of retries after an unfilled state (`0` = unlimited; default `2`). |
+| `refreshInterval` | `number` | Seconds before refreshing filled ads (`0` disables refresh; default `0`). |
+| `maxRefreshes` | `number` | Max number of scheduled refreshes per slot (`0` = unlimited; default `10`). |
+| `refreshOnResize` | `boolean` | Refresh when element width changes by at least `25px` after a filled state. |
 | `debug` | `boolean` | When true, element logs lifecycle events. |
 
 Use `SmartAdsense.config()` globally and override per-element via the `params` attribute (JSON string merged over defaults).
